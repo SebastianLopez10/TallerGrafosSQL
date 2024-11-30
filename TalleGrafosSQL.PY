@@ -80,46 +80,74 @@ def eliminar_arista(origen, destino):
     finally:
         cursor.close()
 
+# Función para leer y mostrar los nodos y aristas
+def ver_nodos_y_aristas():
+    try:
+        cursor = db.cursor()
+
+        # Leer nodos
+        cursor.callproc('LeerNodos')
+        print("\nNodos:")
+        for resultado in cursor.stored_results():
+            for fila in resultado.fetchall():
+                print(f"ID: {fila[0]}, Nombre: {fila[1]}")
+
+        # Leer aristas
+        cursor.callproc('LeerAristas')
+        print("\nAristas:")
+        for resultado in cursor.stored_results():
+            for fila in resultado.fetchall():
+                print(f"Origen: {fila[0]} -> Destino: {fila[1]}")
+
+    except Error as e:
+        print(f"Error al leer nodos y aristas: {e}")
+    finally:
+        cursor.close()
+
+# Menú interactivo
 def mostrar_menu():
-    print("Seleccione una opción:")
-    print("1. Crear un nodo")
-    print("2. Leer nodos")
-    print("3. Actualizar un nodo")
-    print("4. Eliminar un nodo")
-    print("5. Crear una arista")
-    print("6. Eliminar una arista")
-    print("7. Salir")
-
-def ejecutar_opcion(opcion):
-    if opcion == 1:
-        id_nodo = int(input("Ingrese el ID del nodo: "))
-        nombre = input("Ingrese el nombre del nodo: ")
-        crear_nodo(id_nodo, nombre)
-    elif opcion == 2:
-        leer_nodos()
-    elif opcion == 3:
-        id_nodo = int(input("Ingrese el ID del nodo: "))
-        nombre = input("Ingrese el nuevo nombre del nodo: ")
-        actualizar_nodo(id_nodo, nombre)
-    elif opcion == 4:
-        id_nodo = int(input("Ingrese el ID del nodo a eliminar: "))
-        eliminar_nodo(id_nodo)
-    elif opcion == 5:
-        id_origen = int(input("Ingrese el ID del nodo origen: "))
-        id_destino = int(input("Ingrese el ID del nodo destino: "))
-        crear_arista(id_origen, id_destino)
-    elif opcion == 6:
-        id_origen = int(input("Ingrese el ID del nodo origen: "))
-        id_destino = int(input("Ingrese el ID del nodo destino: "))
-        eliminar_arista(id_origen, id_destino)
-    elif opcion == 7:
-        print("Saliendo...")
-        exit()
-    else:
-        print("Opción no válida. Intente de nuevo.")
-
-if __name__ == "__main__":
     while True:
-        mostrar_menu()
-        opcion = int(input("Ingrese una opción: "))
-        ejecutar_opcion(opcion)
+        print("\n--- Menú de Operaciones ---")
+        print("1. Crear Nodo")
+        print("2. Leer Nodos")
+        print("3. Actualizar Nodo")
+        print("4. Eliminar Nodo")
+        print("5. Crear Arista")
+        print("6. Eliminar Arista")
+        print("7. Ver Nodos y Aristas")
+        print("8. Salir")
+
+        opcion = input("Elige una opción (1-8): ")
+
+        if opcion == "1":
+            id = int(input("Ingrese el ID del nodo: "))
+            nombre = input("Ingrese el nombre del nodo: ")
+            crear_nodo(id, nombre)
+        elif opcion == "2":
+            leer_nodos()
+        elif opcion == "3":
+            id = int(input("Ingrese el ID del nodo a actualizar: "))
+            nuevo_nombre = input("Ingrese el nuevo nombre del nodo: ")
+            actualizar_nodo(id, nuevo_nombre)
+        elif opcion == "4":
+            id = int(input("Ingrese el ID del nodo a eliminar: "))
+            eliminar_nodo(id)
+        elif opcion == "5":
+            origen = int(input("Ingrese el ID del nodo de origen: "))
+            destino = int(input("Ingrese el ID del nodo de destino: "))
+            crear_arista(origen, destino)
+        elif opcion == "6":
+            origen = int(input("Ingrese el ID del nodo de origen de la arista a eliminar: "))
+            destino = int(input("Ingrese el ID del nodo de destino de la arista a eliminar: "))
+            eliminar_arista(origen, destino)
+        elif opcion == "7":
+            ver_nodos_y_aristas()  # Mostrar nodos y aristas
+        elif opcion == "8":
+            print("Saliendo del programa...")
+            break
+        else:
+            print("Opción no válida, por favor ingrese una opción del 1 al 8.")
+
+# Ejecutar el menú
+if __name__ == "__main__":
+    mostrar_menu()
